@@ -1,11 +1,475 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý Sản phẩm</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Sản phẩm - Premium Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Form Controls */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        input {
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+
+        th:hover {
+            background-color: #e2e8f0;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #fcfcfd;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f5f9;
+            transition: background-color 0.2s;
+        }
+
+        .sort-icon {
+            display: inline-block;
+            width: 1rem;
+            margin-left: 0.25rem;
+            font-size: 0.75rem;
+        }
+
+        .price-cell {
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .quantity-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* No Data State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        /* Notifications */
+        #notification-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--primary);
+            margin-bottom: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
 </head>
 <body>
+    <div id="notification-container"></div>
 
+    <div class="container">
+        <header>
+            <h1>Product Manager</h1>
+            <p class="subtitle">Quản lý danh mục sản phẩm của bạn một cách chuyên nghiệp</p>
+        </header>
+
+        <!-- Form Section -->
+        <section class="card">
+            <h2 class="card-title">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                Thêm sản phẩm mới
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="input-name">Tên sản phẩm</label>
+                    <input type="text" id="input-name" placeholder="Ví dụ: iPhone 15 Pro">
+                </div>
+                <div class="form-group">
+                    <label for="input-category">Danh mục</label>
+                    <input type="text" id="input-category" placeholder="Ví dụ: Điện tử">
+                </div>
+                <div class="form-group">
+                    <label for="input-price">Đơn giá (VNĐ)</label>
+                    <input type="number" id="input-price" placeholder="8500000">
+                </div>
+                <div class="form-group">
+                    <label for="input-quantity">Số lượng</label>
+                    <input type="number" id="input-quantity" placeholder="5">
+                </div>
+                <button id="btn-add" class="btn btn-primary">
+                    Thêm ngay
+                </button>
+            </div>
+        </section>
+
+        <!-- Table Section -->
+        <section class="card">
+            <h2 class="card-title">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                Danh sách sản phẩm
+            </h2>
+            <div class="table-container">
+                <table id="product-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">STT</th>
+                            <th id="header-name">Tên sản phẩm <span class="sort-icon" id="sort-indicator"></span></th>
+                            <th>Danh mục</th>
+                            <th>Đơn giá</th>
+                            <th style="width: 100px;">Số lượng</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-body">
+                        <!-- Data will be loaded via AJAX -->
+                    </tbody>
+                </table>
+                <div id="loading-state" class="empty-state">Đang tải dữ liệu...</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // State management
+        let products = [];
+        let sortDirection = 0; // 0: none, 1: asc, -1: desc
+
+        // DOM elements
+        const productBody = document.getElementById('product-body');
+        const loadingState = document.getElementById('loading-state');
+        const btnAdd = document.getElementById('btn-add');
+        const headerName = document.getElementById('header-name');
+        const sortIndicator = document.getElementById('sort-indicator');
+
+        // Inputs
+        const inputName = document.getElementById('input-name');
+        const inputCategory = document.getElementById('input-category');
+        const inputPrice = document.getElementById('input-price');
+        const inputQuantity = document.getElementById('input-quantity');
+
+        // 1. Load data via AJAX
+        function loadProducts() {
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            products = JSON.parse(xhr.responseText);
+                            renderTable();
+                            loadingState.style.display = 'none';
+                        } catch (e) {
+                            showNotification('Lỗi khi xử lý dữ liệu JSON', 'danger');
+                        }
+                    } else {
+                        showNotification('Không thể tải dữ liệu từ products.json', 'danger');
+                        loadingState.textContent = 'Lỗi khi tải dữ liệu';
+                    }
+                }
+            };
+            xhr.open('GET', 'products.json', true);
+            xhr.send();
+        }
+
+        // 2. Render table
+        function renderTable() {
+            productBody.innerHTML = '';
+            
+            if (products.length === 0) {
+                loadingState.style.display = 'block';
+                loadingState.textContent = 'Chưa có sản phẩm nào';
+                return;
+            }
+
+            loadingState.style.display = 'none';
+
+            products.forEach((product, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td style="font-weight: 500;">${escapeHtml(product.name)}</td>
+                    <td>${escapeHtml(product.category || 'N/A')}</td>
+                    <td class="price-cell">${formatCurrency(product.price)}</td>
+                    <td><span class="quantity-badge">${product.quantity}</span></td>
+                `;
+                productBody.appendChild(tr);
+            });
+        }
+
+        // 3. Add product
+        btnAdd.addEventListener('click', function() {
+            const name = inputName.value.trim();
+            const category = inputCategory.value.trim() || 'Khác';
+            const price = parseFloat(inputPrice.value);
+            const quantity = parseInt(inputQuantity.value);
+
+            // Validation
+            if (name.length < 3) {
+                showNotification('Tên sản phẩm phải có ít nhất 3 ký tự', 'danger');
+                return;
+            }
+            if (isNaN(price) || price <= 0) {
+                showNotification('Đơn giá phải là số dương', 'danger');
+                return;
+            }
+            if (isNaN(quantity) || quantity < 1) {
+                showNotification('Số lượng phải >= 1', 'danger');
+                return;
+            }
+
+            // Create new product object
+            const newProduct = {
+                id: Date.now(), // Unique ID
+                name: name,
+                category: category,
+                price: price,
+                quantity: quantity
+            };
+
+            // Add to state and re-render
+            products.push(newProduct);
+            renderTable();
+
+            // Reset inputs
+            inputName.value = '';
+            inputCategory.value = '';
+            inputPrice.value = '';
+            inputQuantity.value = '';
+            
+            showNotification('Thêm sản phẩm thành công!');
+        });
+
+        // 4. Sort function
+        headerName.addEventListener('click', function() {
+            if (products.length === 0) return;
+
+            // Toggle direction: 0 -> 1 -> -1 -> 1...
+            if (sortDirection === 0 || sortDirection === -1) {
+                sortDirection = 1;
+                sortIndicator.textContent = '▲';
+            } else {
+                sortDirection = -1;
+                sortIndicator.textContent = '▼';
+            }
+
+            products.sort((a, b) => {
+                const nameA = a.name.toLowerCase();
+                const nameB = b.name.toLowerCase();
+                if (nameA < nameB) return -1 * sortDirection;
+                if (nameA > nameB) return 1 * sortDirection;
+                return 0;
+            });
+
+            renderTable();
+        });
+
+        // Helpers
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notification-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            if (type === 'danger') toast.style.borderLeftColor = 'var(--danger)';
+            toast.textContent = message;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(20px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
 </body>
 </html>
